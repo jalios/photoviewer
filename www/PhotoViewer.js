@@ -1,6 +1,6 @@
 var exec = require('cordova/exec');
 
-exports.show = function(url, title, options) {
+exports.show = function(url, title, options, successCallback, errorCallback) {
     if (title == undefined) {
         title = '';
     }
@@ -23,5 +23,5 @@ exports.show = function(url, title, options) {
 
     var args = [url, title, options.share, options.closeButton, options.copyToReference];
 
-    exec(function() {}, function() {}, "PhotoViewer", "show", args);
+    exec(successCallback, errorCallback, "PhotoViewer", "show", args);
 };

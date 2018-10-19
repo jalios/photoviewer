@@ -17,6 +17,7 @@
 
 @property (nonatomic, strong) UIDocumentInteractionController *docInteractionController;
 @property (nonatomic, strong) NSMutableArray *documentURLs;
+@property (nonatomic,strong) NSString* tmpCommandCallbackID;
 
 - (void)show:(CDVInvokedUrlCommand*)command;
 @end
@@ -54,6 +55,7 @@
 
 - (void)show:(CDVInvokedUrlCommand*)command
 {
+    self.tmpCommandCallbackID = command.callbackId;
     if (isOpen == false) {
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
         [[NSNotificationCenter defaultCenter]
@@ -122,12 +124,10 @@
                     });
                 }
             }];
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         } else {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         }
-
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
 }
 
@@ -238,6 +238,7 @@
     [closeBtn removeFromSuperview];
     closeBtn = nil;
     [self closeImage];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"closeButtonPressed"] callbackId:self.tmpCommandCallbackID];
 }
 
 - (void)closeImage {
